@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: re-cinq/lore
-          ref: v1.0.3
+          ref: v1.0.4
           path: lore
       - uses: actions/setup-node@v4
         with:

@@ -107,6 +107,6 @@ Lore refuses a bad file on its own and applies the rest. The refusals show on th
 npm run pack:lint -w apps/lore-api -- ~/workspace/lore-assembly-lines
 ```
 
-It exits 1 and prints each refused file with its reason. The `pack-lint` workflow runs the same check on every pull request. Change its `ref` when your install moves to a new Lore release.
+It exits 1 and prints each refused file with its reason. The `pack-lint` workflow runs the same check on every pull request. Its `ref` names the Lore release whose checks it runs. Set it to the release your install runs.
 
 The full layout reference is `docs/using-lore/pack-layout-reference.md` in the Lore repository.

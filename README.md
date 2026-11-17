@@ -80,6 +80,8 @@ A new assembly line is `<line>/pipeline.yaml`, in the same format as the files i
 
 ## Connecting the pack to Lore
 
+The [setup guide](docs/setup.md) walks through it step by step, from making your own copy to the first change.
+
 Set the repository on both lore-api and the stations service in the umbrella chart's values:
 
 ```yaml

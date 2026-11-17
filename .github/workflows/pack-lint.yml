@@ -1,0 +1,21 @@
+name: pack-lint
+on: [pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: pack
+      - uses: actions/checkout@v4
+        with:
+          repository: re-cinq/lore
+          ref: v1.0.2
+          path: lore
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+        working-directory: lore
+      - run: npm run pack:lint -w apps/lore-api -- "$GITHUB_WORKSPACE/pack"
+        working-directory: lore

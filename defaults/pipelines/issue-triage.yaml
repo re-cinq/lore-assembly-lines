@@ -1,0 +1,436 @@
+line:
+  id: issue-triage
+  entry: load-implementation
+  exit: done
+  args:
+    # One run per issue: the webhook starts a run the moment the label lands and the
+    # two-minute sweep still sees that label, so without a key the issue gets two.
+    issue_url:
+      kind: value
+      subject: true
+    # Both sent by the dispatch that starts the run (apps/stations/src/events/handlers.ts);
+    # the label and close stations need them to reach the issue.
+    issue_number:
+      kind: value
+    repo:
+      kind: value
+    # The default branch, which decompose reads to split a large issue (apps/stations/src/work/issue-triage-tick/).
+    target:
+      kind: git
+  nodes:
+    - id: load-implementation
+      station: triage-load-implementation
+    - id: assess-implementation
+      station: triage-assess-implementation
+    - id: verify-implementation
+      station: triage-verify-implementation
+    - id: reproduce
+      station: triage-reproduce
+    - id: label-reproduced
+      station: triage-label
+    - id: label-needs-repro
+      station: triage-label
+    - id: label-unable
+      station: triage-label
+    - id: label-skipped
+      station: triage-label
+    - id: diagnose
+      station: triage-diagnose
+    - id: label-diagnosed
+      station: triage-label
+    - id: verify
+      station: triage-verify
+    - id: decompose
+      station: triage-decompose
+    - id: file-issues
+      station: triage-file-issues
+    - id: close-obsolete
+      station: close-issue
+    - id: label-not-actionable
+      station: triage-label
+    - id: label-failed
+      station: triage-label
+    - id: human-gate
+      station: human-gate
+    - id: done
+  edges:
+    - from: load-implementation
+      to: assess-implementation
+      on: success
+    - from: load-implementation
+      to: done
+      on: closed
+    - from: load-implementation
+      to: label-failed
+      on: failed
+    - from: assess-implementation
+      to: verify-implementation
+      on: success
+    - from: assess-implementation
+      to: label-failed
+      on: failed
+    - from: verify-implementation
+      to: close-obsolete
+      on: implemented
+    - from: verify-implementation
+      to: reproduce
+      on: partial
+    - from: verify-implementation
+      to: reproduce
+      on: missing
+    - from: verify-implementation
+      to: reproduce
+      on: unproven
+    - from: verify-implementation
+      to: human-gate
+      on: needs-person
+    - from: verify-implementation
+      to: assess-implementation
+      on: changes_requested
+      iteration_max: 3
+    - from: verify-implementation
+      to: label-failed
+      on: failed
+    - from: reproduce
+      to: label-reproduced
+      on: success
+    - from: reproduce
+      to: label-needs-repro
+      on: needs-reproduction
+    - from: reproduce
+      to: label-unable
+      on: unable-to-reproduce
+    - from: reproduce
+      to: label-skipped
+      on: skipped
+    - from: reproduce
+      to: label-failed
+      on: failed
+      iteration_max: 3
+    - from: label-reproduced
+      to: diagnose
+      on: success
+    - from: label-needs-repro
+      to: done
+      on: success
+    - from: label-unable
+      to: done
+      on: success
+    - from: label-skipped
+      to: done
+      on: success
+    - from: diagnose
+      to: label-diagnosed
+      on: success
+    - from: diagnose
+      to: label-failed
+      on: failed
+      iteration_max: 3
+    - from: label-diagnosed
+      to: verify
+      on: success
+    - from: verify
+      to: human-gate
+      on: success
+    - from: verify
+      to: close-obsolete
+      on: obsolete
+    - from: verify
+      to: decompose
+      on: large-issue
+    - from: decompose
+      to: file-issues
+      on: success
+    - from: decompose
+      to: label-failed
+      on: failed
+      iteration_max: 3
+    - from: file-issues
+      to: done
+      on: success
+    - from: file-issues
+      to: decompose
+      on: changes_requested
+      iteration_max: 3
+    - from: file-issues
+      to: label-failed
+      on: failed
+    - from: verify
+      to: label-not-actionable
+      on: not-actionable
+    - from: verify
+      to: label-failed
+      on: failed
+      iteration_max: 3
+    - from: close-obsolete
+      to: done
+      on: success
+    - from: close-obsolete
+      to: human-gate
+      on: unproven
+    - from: close-obsolete
+      to: label-failed
+      on: failed
+    - from: label-not-actionable
+      to: done
+      on: success
+    - from: label-failed
+      to: done
+      on: success
+    - from: human-gate
+      to: done
+      on: success
+stations:
+  triage-load-implementation:
+    description: Pins every issue report and main revision and lists its matching recorded CI test outcomes, one test per line, for assessment.
+    kind: service
+    outcomes:
+      - success
+      - closed
+      - failed
+    needs:
+      - name: repo
+        kind: value
+      - name: issue_number
+        kind: value
+    produces:
+      - name: implementation_scope
+        kind: file
+      - name: issue_scope
+        kind: file
+      - name: issue_thread
+        kind: file
+      - name: test_report
+        kind: file
+  triage-assess-implementation:
+    description: Assesses the whole issue report against source and relevant recorded test behavior without changing the repository or GitHub.
+    kind: agent
+    agent_definition: triage-assess-implementation
+    conversation: new
+    outcomes:
+      - success
+      - failed
+    result_required: true
+    needs:
+      - name: target
+        kind: git
+        path: target
+        access: read
+      - name: implementation_scope
+        kind: file
+        path: implementation-scope.json
+      - name: issue_scope
+        kind: file
+        path: issue-scope.md
+      - name: test_report
+        kind: file
+        path: test-report.jsonl
+      - name: implementation_report
+        kind: file
+        path: implementation-report.md
+        optional: true
+      - name: implementation_assessment
+        kind: file
+        path: implementation-assessment.json
+        optional: true
+    produces:
+      - name: implementation_assessment
+        kind: file
+        path: implementation-assessment.json
+  triage-verify-implementation:
+    description: Reuses the shared implementation verifier and requires matching passing CI test evidence before narrowing or completing any issue.
+    kind: service
+    outcomes:
+      - implemented
+      - partial
+      - missing
+      - unproven
+      - needs-person
+      - changes_requested
+      - failed
+    needs:
+      - name: repo
+        kind: value
+      - name: issue_number
+        kind: value
+      - name: implementation_scope
+        kind: file
+      - name: implementation_assessment
+        kind: file
+    produces:
+      - name: implementation_report
+        kind: file
+      - name: verified_completion
+        kind: file
+  triage-verify:
+    description: An AI agent checks the issue against the repository's specs and docs and decides whether it is a genuine bug, obsolete, or not actionable, with a short verdict for the reporter.
+    kind: agent
+    agent_definition: triage-verify
+    conversation: new
+    outcomes:
+      - success
+      - obsolete
+      - not-actionable
+      - large-issue
+      - failed
+    result_required: true
+    needs:
+      - name: issue_scope
+        kind: file
+        path: issue-scope.md
+      - name: issue_thread
+        kind: file
+        path: issue-thread.md
+      - name: issue_url
+        kind: value
+      - name: diagnosis
+        kind: file
+        path: diagnosis.md
+    produces:
+      # One paragraph for the issue's reporter, which close-obsolete posts and
+      # label-not-actionable comments; the agent sends it as the result line's extras.
+      - name: verdict
+        kind: value
+  triage-reproduce:
+    description: An AI agent tries to reproduce the reported behaviour against the repository and says whether it reproduced, needs more detail, or could not.
+    kind: agent
+    agent_definition: triage-reproduce
+    conversation: new
+    outcomes:
+      - success
+      - unable-to-reproduce
+      - needs-reproduction
+      - skipped
+      - failed
+    result_required: true
+    needs:
+      - name: target
+        kind: git
+        path: target
+        access: read
+      - name: issue_scope
+        kind: file
+        path: issue-scope.md
+      - name: issue_thread
+        kind: file
+        path: issue-thread.md
+      - name: issue_url
+        kind: value
+    produces:
+      - name: verdict
+        kind: value
+        optional: true
+  triage-diagnose:
+    description: An AI agent traces a reproduced issue to its cause in the code and writes a short diagnosis that verify reads.
+    kind: agent
+    agent_definition: triage-diagnose
+    conversation: new
+    outcomes:
+      - success
+      - failed
+    result_required: true
+    needs:
+      - name: target
+        kind: git
+        path: target
+        access: read
+      - name: issue_scope
+        kind: file
+        path: issue-scope.md
+      - name: issue_thread
+        kind: file
+        path: issue-thread.md
+      - name: issue_url
+        kind: value
+    produces:
+      - name: diagnosis
+        kind: file
+        path: diagnosis.md
+  triage-decompose:
+    description: An AI agent splits a confirmed bug too broad for one change into a story and small tasks, each with acceptance criteria and a test plan.
+    kind: agent
+    agent_definition: triage-decompose
+    conversation: new
+    outcomes:
+      - success
+      - failed
+    result_required: true
+    needs:
+      - name: target
+        kind: git
+        path: target
+        access: read
+      - name: issue_url
+        kind: value
+      - name: issue_scope
+        kind: file
+        path: issue-scope.md
+      - name: issue_thread
+        kind: file
+        path: issue-thread.md
+      - name: diagnosis
+        kind: file
+        path: diagnosis.md
+    produces:
+      - name: decomposition
+        kind: file
+        path: decomposition.json
+  triage-file-issues:
+    description: Files the decomposition as a story issue with one sub-issue per task, labelled for a person to prioritize rather than queued for the implementation loop.
+    kind: service
+    outcomes:
+      - success
+      - changes_requested
+      - failed
+    needs:
+      - name: target
+        kind: git
+        path: target
+        access: read
+      - name: decomposition
+        kind: file
+        path: decomposition.json
+      - name: issue_number
+        kind: value
+    produces: []
+  close-issue:
+    description: Closes only an unchanged issue with verified implementation and CI behavior evidence; unsupported obsolete verdicts wait for human review.
+    kind: service
+    outcomes:
+      - success
+      - unproven
+      - failed
+    needs:
+      - name: repo
+        kind: value
+      - name: issue_number
+        kind: value
+      - name: verdict
+        kind: value
+        optional: true
+      - name: verified_completion
+        kind: file
+        optional: true
+    produces: []
+  triage-label:
+    description: Labels the issue with the triage result, not actionable or failed. For a not actionable issue it also posts the agent's verdict as a comment.
+    kind: service
+    outcomes:
+      - success
+    needs:
+      - name: repo
+        kind: value
+      - name: issue_number
+        kind: value
+      - name: verdict
+        kind: value
+        optional: true
+    produces: []
+  human-gate:
+    description: Waits on the issue page for a person to decide whether a confirmed bug is worth implementing.
+    kind: human
+    route: "{args.issue_url}"
+    outcomes:
+      - success
+    needs: []
+    produces: []

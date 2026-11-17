@@ -1,0 +1,123 @@
+# One Slack channel's daily digest (specs/daily-digest FR14). A station collects
+# one line per person, what they merged or closed and what they have open, into
+# a draft; an agent writes a one-sentence intro and shortens each line; a
+# station posts the result into the week's thread.
+#
+# Started per channel by the stations service's digest tick, keyed on the
+# channel, the local day and the scheduled slot, so a second tick joins the run
+# rather than starting another.
+#
+# The agent can only add to the digest, never block it: every outcome of
+# `refine` reaches `post`, which posts the draft when the agent left no
+# message. A failed `collect` or `post` is retried once and a second failure
+# settles the run as iteration_max, because a run that reaches the exit settles
+# as success; the next tick may then start the slot again.
+line:
+  id: daily-digest
+  entry: collect
+  exit: done
+  args:
+    digest_key:
+      kind: value
+      subject: true
+    channel:
+      kind: value
+    week_key:
+      kind: value
+    digest_date:
+      kind: value
+    digest_repos:
+      kind: value
+  nodes:
+    - id: collect
+      station: digest-collect
+    - id: refine
+      station: digest-refine
+    - id: post
+      station: digest-post
+    - id: done
+  edges:
+    - from: collect
+      to: refine
+      on: success
+    - from: collect
+      to: collect
+      on: failed
+      iteration_max: 1
+    - from: refine
+      to: post
+      on: always
+    - from: post
+      to: done
+      on: success
+    - from: post
+      to: post
+      on: failed
+      iteration_max: 1
+stations:
+  digest-collect:
+    description: Gathers, per person across the channel's repositories, what they merged or closed and which pull requests and issues they have open, into a draft of today's Slack digest.
+    kind: service
+    outcomes:
+      - success
+      - failed
+    needs:
+      - name: channel
+        kind: value
+      - name: week_key
+        kind: value
+      - name: digest_date
+        kind: value
+      - name: digest_repos
+        kind: value
+      - name: voice
+        kind: value
+        optional: true
+    produces:
+      - name: digest_draft
+        kind: file
+  digest-refine:
+    description: An AI agent writes a one-sentence intro in the voice the channel chose and shortens each person's line. It can only improve the digest, never block it.
+    kind: agent
+    agent_definition: digest-refine
+    conversation: new
+    outcomes:
+      - success
+      - failed
+    needs:
+      - name: digest_draft
+        kind: file
+        path: digest-draft.md
+      - name: description
+        kind: value
+        optional: true
+    produces:
+      - name: digest_message
+        kind: file
+        path: digest.md
+  digest-post:
+    description: Posts the digest into the week's Slack thread for the channel. When the agent wrote nothing, it posts the plain draft instead.
+    kind: service
+    outcomes:
+      - success
+      - failed
+    needs:
+      - name: channel
+        kind: value
+      - name: week_key
+        kind: value
+      - name: digest_date
+        kind: value
+      - name: digest_repos
+        kind: value
+      # Every repo on the channel, for the week's thread parent.
+      - name: channel_repos
+        kind: value
+        optional: true
+      - name: digest_draft
+        kind: file
+      # Absent when the agent failed or wrote nothing; the draft is posted then.
+      - name: digest_message
+        kind: file
+        optional: true
+    produces: []

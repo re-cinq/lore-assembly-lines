@@ -1,8 +1,13 @@
 # Lore assembly lines
 
-This repository is a Lore pack. It holds every assembly line Lore runs and every agent prompt those lines use, and a Lore install that reads it runs exactly what is here. Edit a prompt or a line, merge, and the install picks it up within a minute.
+This repository is a Lore pack. Your team edits its assembly lines and agent prompts in Git. When a change merges to the configured branch, Lore syncs the pack and Floor runs the new definitions. [Floor workflow engine](https://github.com/re-cinq/floor)
 
-As it comes, the pack is a copy of what Lore v1.0.3 ships, so connecting it changes nothing until you edit something. The [setup guide](docs/setup.md) walks through connecting it to an install and making a first change.
+## Define your first line
+
+1. Decide what happens when Product approves a launch, puts it on hold, or hasn't answered yet. Write the rule in YAML and check it against an example. [Define your first assembly line](https://github.com/re-cinq/floor/blob/main/docs/define-a-launch-approval.md)
+2. Change the rule so Communications also has to sign off. Trace what happens when the teams disagree. [Add a second sign-off](https://github.com/re-cinq/floor/blob/main/docs/add-a-launch-review.md)
+
+To try the example in this pack, save it as `launch-approval/pipeline.yaml` and open a pull request. After it merges, the Pack card in Lore Settings shows the commit the install applied and any files it refused. For a first install, compare the lines you want to keep here with your Lore release. A full pipeline file replaces the shipped line. [Connect the pack to Lore](docs/setup.md)
 
 ## Layout
 

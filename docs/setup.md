@@ -50,15 +50,15 @@ curl -s -H "Authorization: Bearer $LORE_TOKEN" https://<lore-api host>/api/pack
 
 ## 5. Make a first change
 
-Open `code-review/agents/code-review.md` and add a line to the end of the prompt:
+Open `code-review/agents/code-review-product.md`. Add this instruction before the output format in the product reviewer’s prompt.
 
 ```markdown
-Flag any new SQL query that is built by string concatenation.
+When a change affects exports, check whether existing customers can still read the exported file using the documented format.
 ```
 
 Open a pull request. `pack-lint` checks it the same way Lore will. Merge it. The push reaches Lore through the GitHub webhook and the pack is applied within a minute. If the webhook is lost, a 15-minute tick applies it anyway, and an admin can press Sync now on the Pack card.
 
-From the next review on, the code review agent runs your prompt. The Agents page shows it, without an Edit link, because the pack owns it. A repository's own override of the agent stays editable.
+The product pass uses your prompt on the next review or recheck. The Agents page shows it, without an Edit link, because the pack owns it. A repository's own override of the agent stays editable.
 
 To undo, revert the commit and merge.
 

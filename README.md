@@ -16,7 +16,7 @@ One folder per assembly line. The folder name is the line's name.
 ```
 code-review/
   pipeline.yaml               the line: its steps and how they connect
-  agents/code-review.md       the agent a step runs: settings, then the prompt
+  agents/code-review-product.md       the agent a step runs: settings, then the prompt
 implementation-loop/
   pipeline.yaml
   agents/loop-dod.md
@@ -40,8 +40,7 @@ These are the lines and the agents each one uses:
 
 | Line | Agents |
 | --- | --- |
-| code-review | code-review |
-| code-review-recheck | code-review-recheck |
+| code-review, code-review-recheck | shadow-review-reader (code and tests in separate sessions), shadow-compare-intent, shadow-review-challenge, code-review-product |
 | code-review-reply | code-review-refine |
 | daily-digest | digest-refine |
 | feature-planning | plan-analyze, plan-sketch, plan-validate, spec-analysis, spec-draft, spec-qa-answer, spec-qa-generate, spec-qa-recheck, spec-rework, spec-write |

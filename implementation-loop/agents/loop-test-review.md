@@ -2,6 +2,7 @@
 # The implementation-loop line's `loop-test-review` agent: the whole definition the floor is seeded with, settings here and the prompt below.
 review_required: false
 execution_mode: claude-code
+# Opus 5.5 again since 2026-11-21, after one day on Gemini 4 Carbon while the Anthropic credit was out.
 model: claude-opus-5-5
 image: ${LORE_AGENT_IMAGE}
 timeout_minutes: 60

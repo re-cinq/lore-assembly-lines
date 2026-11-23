@@ -1,7 +1,8 @@
 ---
 # The feature-planning line's `spec-analysis` agent: the whole definition the floor is seeded with, settings here and the prompt below.
 review_required: false
-model: claude-sonnet-4-6
+# Sonnet 5.5 since 2026-11-21, by the owner's decision: this agent ran on Sonnet 4.6 until 2026-11-20 and on Gemini 4 Argon for a day while the Anthropic credit was out; on every task loop-bench measured, Sonnet 5.5 was cheaper and better than 4.6.
+model: claude-sonnet-5-5
 image: ${LORE_AGENT_IMAGE}
 timeout_minutes: 15
 config:

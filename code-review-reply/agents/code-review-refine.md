@@ -2,7 +2,8 @@
 # The code-review-reply line's `code-review-refine` agent: the whole definition the floor is seeded with, settings here and the prompt below.
 review_required: false
 execution_mode: claude-code
-model: claude-sonnet-4-6
+# Sonnet 5.5 again since 2026-11-21, when the Anthropic credit was topped up: the review was built and tried on it.
+model: claude-sonnet-5-5
 image: ${LORE_AGENT_IMAGE}
 timeout_minutes: 20
 config:

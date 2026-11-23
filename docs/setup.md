@@ -8,7 +8,7 @@ Create a repository from this one with GitHub's "Use this template" button, in t
 
 One install reads one pack, so one repository serves the whole organisation.
 
-The copy holds what the Lore release in its README ships. If your install runs a newer release, refresh the copy first (see [Upgrading Lore](#upgrading-lore)), or connecting it would put the older prompts and lines back.
+The copy holds what the latest Lore sync wrote here. If your install runs an older release, compare the copy with the tag of your Lore release (see [Upgrading Lore](#upgrading-lore)), or connecting it would put newer prompts and lines in front of your install.
 
 ## 2. Let Lore read it
 
@@ -64,11 +64,11 @@ To undo, revert the commit and merge.
 
 ## 6. Changing a line
 
-A line's `pipeline.yaml` lists its steps (stations), the start and end, and which outcome of each step leads where. Edit it the same way: the floor gets your version on the next sync, and runs that already started finish on the version they started with.
+A line's `assembly-line.yaml` lists its steps (stations), the start and end, and which outcome of each step leads where. Edit it the same way: the floor gets your version on the next sync, and runs that already started finish on the version they started with.
 
 Be careful with Lore's own steps (the ones with `kind: service`). Lore's code answers them and expects their names, inputs and outputs as shipped. Changing an agent step's prompt or outcomes is safe ground; renaming or removing a service step can stop the line.
 
-A step with the same name in two lines is one step on the floor. If you change a step that another line also uses, keep the two `pipeline.yaml` files in agreement.
+A step with the same name in two lines is one step on the floor. If you change a step that another line also uses, keep the two `assembly-line.yaml` files in agreement.
 
 ## When a file is refused
 
@@ -83,8 +83,8 @@ Fix the file and push again. `pack-lint` catches all of these before a merge.
 
 ## Upgrading Lore
 
-When your install moves to a new Lore release:
+A pack used as is freezes every agent and skill it holds. When your install moves to a new Lore release:
 
 1. Set `ref` in `.github/workflows/pack-lint.yml` to the new release.
-2. On a branch, copy each `libs/assembly-lines/src/floor-pipelines/<line>.yaml` of that release to `<line>/pipeline.yaml`, and each agent file from `libs/shared/src/agent-defaults/` to the folder of the line that uses it.
-3. Read the diff. Keep the changes Lore made and put your own edits back where the copy overwrote them. Merge when `pack-lint` passes.
+2. Compare your copy with the tag of this repository that matches the release, for example `git diff <your base> v1.4.0` after adding this repository as a remote. The tag holds exactly what that Lore release ships.
+3. On a branch, bring over the lines, agents and skills you want. Keep your own edits where the new files would overwrite them. Merge when `pack-lint` passes.

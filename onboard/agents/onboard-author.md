@@ -2,6 +2,7 @@
 # The onboard line's `onboard-author` agent: the whole definition the floor is seeded with, settings here and the prompt below.
 review_required: true
 execution_mode: claude-code
+# Sonnet 5.5 again since 2026-11-21, with loop-tdd-round: the agents that write code follow loop-bench's pick for that work.
 model: claude-sonnet-5-5
 image: ${LORE_AGENT_IMAGE}
 timeout_minutes: 30

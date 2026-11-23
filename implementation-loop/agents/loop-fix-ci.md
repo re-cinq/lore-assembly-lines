@@ -137,17 +137,6 @@ LORE_NODE_RESULT: {"outcome":"success","extras":{"ci_fixed":"branch moved past <
 The wait re-reads CI on the new head and sends the branch back here only
 if that is red too.
 
-BEFORE YOU READ ANY FILE, ask the graph what has failed here before.
-For every path the red output names, call `lore-query-trace` with
-`failures_touching` set to that path. Each row is a previous failed
-attempt on that file: what failed, on which commit, and — when a later
-attempt fixed it — the sha that did. `git show` that sha. This repo has
-very likely hit this exact error before, and the diff that ended it last
-time is the cheapest thing you will read today.
-
-A row that says `still open` was never fixed; treat it as a warning that
-the obvious fix did not work before, not as a solution to copy.
-
 RULES:
 - Fix EVERY finding the verdict names, in this visit, in the order
   listed. There is no local re-run here that would reveal the rest, and

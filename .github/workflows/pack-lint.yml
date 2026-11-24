@@ -5,19 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: pack
-      - uses: actions/checkout@v4
-        with:
-          repository: re-cinq/lore
-          ref: v1.3.0
-          path: lore
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci
-        working-directory: lore
-      - run: npm run build -w @re-cinq/lore-shared && npm run build -w @re-cinq/lore-assembly-lines
-        working-directory: lore
-      - run: npm run pack:lint -w apps/lore-api -- "$GITHUB_WORKSPACE/pack"
-        working-directory: lore
+      # floor-pipeline reads the host keys from floor-collection.yaml, which Lore's export writes.
+      - run: npx --yes @re-cinq/floor-pipeline@0.6.1 lint .

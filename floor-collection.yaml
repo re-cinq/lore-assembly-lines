@@ -1,0 +1,3 @@
+host_keys:
+  - execution_mode
+  - review_required

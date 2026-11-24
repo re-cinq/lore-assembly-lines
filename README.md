@@ -29,41 +29,19 @@ implementation-loop/
   ...
 skills/tdd-start.md           a catalogue skill
 agent-skills/                 a reference copy, not read by Lore from a pack
+floor-collection.yaml         the keys of an agent file that are Lore's own
 docs/setup.md                 not read by Lore
 .github/workflows/pack-lint.yml
 ```
 
-Lore reads these paths:
+The line and agent files follow floor's collection format: see the [agent file reference](https://re-cinq.github.io/floor/specs/agent-file/). `floor-collection.yaml` tells floor that `execution_mode` and `review_required` are Lore's own keys. Lore adds two folders floor does not read:
 
 | Path | What it is |
 | --- | --- |
-| `<line>/assembly-line.yaml` | The line. Its `line.id` must equal the folder name. Lore still reads the old name `pipeline.yaml` in a pack written before, but a folder may not hold both. |
-| `<line>/agents/<agent>.md` | An agent: settings as frontmatter, the prompt as the body. |
-| `<line>/agents/<agent>.extra.md` | Text added to the end of the prompt Lore ships for `<agent>`. Only for an agent this pack does not define in full. |
 | `skills/<name>.md` | A catalogue skill. It replaces Lore's skill of that name, or adds one. It is read-only in the web UI while the pack is set. |
 | `agent-skills/` | A reference copy of the skills and hook bundles baked into Lore's gateway image. Lore does not read it from a pack. |
 
 Any other markdown or YAML file inside a line folder is refused, so a misspelt name shows up on the Pack card instead of quietly doing nothing. Files at the top of the repository, under `docs/` and under `.github/` are ignored.
-
-These are the lines and the agents each one uses:
-
-| Line | Agents |
-| --- | --- |
-| auto-merge | none, every step is Lore's own code |
-| code-review | review-story, review-implementation, review-issue, review-docs, code-review |
-| code-review-recheck | review-story, review-implementation, review-issue, review-docs, code-review-recheck |
-| code-review-reply | code-review-refine |
-| daily-digest | digest-refine |
-| feature-planning | plan-analyze, plan-sketch, plan-validate, spec-analysis, spec-write, spec-rework, spec-draft, spec-qa-generate, spec-qa-answer, spec-qa-recheck |
-| implementation-loop | loop-sync, loop-dod, loop-tdd-round, loop-test-review, loop-fix-ci |
-| issue-triage | triage-assess-implementation, triage-verify, triage-reproduce, triage-diagnose, triage-decompose |
-| lore-run-settled | none, every step is Lore's own code |
-| merge | none, every step is Lore's own code |
-| onboard | onboard-author, onboard-fix-ci |
-| release | release-notes |
-| spec-tickets | spec-tickets-decompose |
-| spec-upkeep | spec-upkeep-update-specs, spec-upkeep-fix-ci |
-| weekly-changelog | changelog-intro |
 
 An agent is defined once in the whole pack, in the folder of the first line that names it. A line can use an agent defined in another line's folder.
 
@@ -91,6 +69,16 @@ Work the ticket. Follow the Acme naming rules.
 A setting may name an environment variable of the install as `${NAME}`, which Lore fills in when it applies the pack. The shipped agents use `${LORE_AGENT_IMAGE}` this way. Variables are never filled into a prompt.
 
 A new line is a new folder with an `assembly-line.yaml`, in the same format as the others here. A step that runs your own code is a `kind: service` station served by a process you deploy. The [pack layout reference](https://github.com/re-cinq/lore/blob/main/docs/using-lore/pack-layout-reference.md) covers it.
+
+## Seeing the lines
+
+To see every line, its steps and the agents each one uses, run this in the repository root:
+
+```
+npx @re-cinq/floor-studio
+```
+
+It shows the lines in a browser, with each file it would refuse and why, and updates when you save a file, so you see a change before you open a pull request.
 
 ## Checking a change
 

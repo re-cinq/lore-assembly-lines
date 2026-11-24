@@ -16,6 +16,7 @@ line:
   id: onboard
   entry: enrol
   exit: done
+  # A start carries `credential`, the person's token, only when a person started the onboarding (FR-296). It is no arg: floor refuses a start that lacks a declared arg, and the enrol station takes it as an optional need.
   args:
     repo:
       kind: git
@@ -24,10 +25,6 @@ line:
       subject: true
     ticket:
       kind: file
-    # The person's token, when a person started the onboarding (FR-296).
-    credential:
-      kind: file
-      optional: true
   nodes:
     - id: enrol
       station: onboard-enrol
@@ -46,7 +43,6 @@ line:
     # station_run.reported for this visit once CI has a verdict.
     - id: await-ci
       station: onboard-await-ci
-      route: "{args.pr_url}"
     - id: fix-ci
       station: onboard-fix-ci
       bind:

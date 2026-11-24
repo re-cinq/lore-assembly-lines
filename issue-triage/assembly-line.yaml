@@ -319,7 +319,6 @@ stations:
     produces:
       - name: verdict
         kind: value
-        optional: true
   triage-diagnose:
     description: An AI agent traces a reproduced issue to its cause in the code and writes a short diagnosis that verify reads.
     kind: agent

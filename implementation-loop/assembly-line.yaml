@@ -76,7 +76,6 @@ line:
     # wrote it: a park costs nothing while it waits.
     - id: await-ci
       station: loop-await-ci
-      route: "{args.pr_url}"
     - id: repair-build
       station: loop-repair-build
       bind:
@@ -103,7 +102,6 @@ line:
       station: loop-mark-ready
     - id: await-pr
       station: loop-await-pr
-      route: "{args.pr_url}"
     - id: sync-pr
       station: loop-sync-check
       bind:

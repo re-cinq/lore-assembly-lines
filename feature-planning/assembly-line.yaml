@@ -148,7 +148,6 @@ line:
     # so that mapping stays out of the floor's generic event matcher.
     - id: merged
       station: spec-pr-merged
-      route: "{args.pr_url}"
     - id: done
     - id: failed
   edges:

@@ -117,10 +117,8 @@ stations:
         kind: value
       - name: previous_tag
         kind: value
-        optional: true
       - name: range_from
         kind: value
-        optional: true
       - name: release_changes
         kind: file
   release-write:
@@ -180,7 +178,6 @@ stations:
     produces:
       - name: published_to
         kind: value
-        optional: true
   release-github-release:
     description: Publishes the GitHub release for the version with the release notes as its body.
     kind: service

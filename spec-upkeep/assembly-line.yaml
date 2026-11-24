@@ -40,7 +40,6 @@ line:
     # and reports to the visit once CI has a verdict.
     - id: await-ci
       station: spec-upkeep-await-ci
-      route: "{args.pr_url}"
     - id: fix-ci
       station: spec-upkeep-fix-ci
       bind:

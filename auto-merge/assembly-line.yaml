@@ -28,7 +28,6 @@ line:
   nodes:
     - id: await-merge
       station: auto-merge-await
-      route: "{args.pr_url}"
     - id: approve
       station: auto-merge-approve
     - id: done

@@ -9,4 +9,4 @@ jobs:
         with:
           node-version: 22
       # floor-pipeline reads the host keys from floor-collection.yaml, which Lore's export writes.
-      - run: npx --yes @re-cinq/floor-pipeline@0.6.0 lint .
+      - run: npx --yes @re-cinq/floor-pipeline@0.6.1 lint .

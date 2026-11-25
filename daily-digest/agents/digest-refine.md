@@ -3,7 +3,7 @@
 review_required: false
 # Gemini 3 Flash wrote the most recognisable voices in a side-by-side on
 # the first live draft (Haiku stayed neutral whatever the prompt said).
-model: gemini-3-flash-preview
+model: gemini-4-hydrogen
 image: ${LORE_AGENT_IMAGE}
 timeout_minutes: 10
 config:

@@ -3,7 +3,7 @@ name: test-design-reviewer
 description: Review test quality using Dave Farley's eight properties of good tests. Use when assessing a test file or suite for understandability, maintainability, repeatability, atomicity, necessity, granularity, speed, and evidence of test-first development.
 context: fork
 agent: Explore
-model: claude-sonnet-4-6
+model: claude-sonnet-5-5
 ---
 
 Review tests as executable specifications and safety evidence. Read the tests before the implementation so their public story can stand on its own, then inspect the production boundary and repository constraints needed to judge the claims accurately. The eight properties come from Dave Farley's [Properties of Good Tests](https://www.linkedin.com/pulse/tdd-properties-good-tests-dave-farley-iexge/).

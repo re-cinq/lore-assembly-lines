@@ -61,7 +61,7 @@ A new agent is an `agents/<name>.md` with a name Lore does not ship. `image`, `t
 ---
 image: ghcr.io/acme/agent:2
 timeout_minutes: 10
-model: claude-sonnet-4-6
+model: claude-sonnet-5-5
 ---
 Work the ticket. Follow the Acme naming rules.
 ```

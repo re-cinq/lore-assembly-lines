@@ -1,7 +1,7 @@
 ---
 # The weekly-changelog line's `changelog-intro` agent: the whole definition the floor is seeded with, settings here and the prompt below.
 review_required: false
-model: gemini-3-flash-preview
+model: gemini-4-hydrogen
 image: ${LORE_AGENT_IMAGE}
 timeout_minutes: 10
 config:

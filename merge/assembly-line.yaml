@@ -15,6 +15,9 @@ line:
   entry: settle
   exit: done
   args:
+    # How the run began: person:<id>, event:<id>, event: or schedule (specs/machine-callers-own-credentials FR-215).
+    started_by:
+      kind: value
     task_id:
       kind: value
       subject: true

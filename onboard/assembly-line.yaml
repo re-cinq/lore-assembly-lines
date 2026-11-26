@@ -18,6 +18,9 @@ line:
   exit: done
   # A start carries `credential`, the person's token, only when a person started the onboarding (FR-296). It is no arg: floor refuses a start that lacks a declared arg, and the enrol station takes it as an optional need.
   args:
+    # How the run began: person:<id>, event:<id>, event: or schedule (specs/machine-callers-own-credentials FR-215).
+    started_by:
+      kind: value
     repo:
       kind: git
     task_id:

@@ -16,6 +16,9 @@ line:
   # reporting a broken run as done.
   fail: failed
   args:
+    # How the run began: person:<id>, event:<id>, event: or schedule (specs/machine-callers-own-credentials FR-215).
+    started_by:
+      kind: value
     # The repository at its default branch, where the merged spec is.
     target:
       kind: git

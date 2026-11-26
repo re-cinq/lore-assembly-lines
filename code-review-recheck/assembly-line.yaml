@@ -3,6 +3,9 @@ line:
   entry: prepare
   exit: done
   args:
+    # How the run began: person:<id>, event:<id>, event: or schedule (specs/machine-callers-own-credentials FR-215).
+    started_by:
+      kind: value
     repo: { kind: git }
     pr_url: { kind: value }
     head_sha: { kind: value, subject: true }

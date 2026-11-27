@@ -22,7 +22,7 @@ config:
     - name: lore
       transport: http
       url: ${LORE_MCP_URL}
-      headers_secret: lore-mcp-auth
+      visit_token: { audience: lore, scopes: [context:read, context:write] }
 ---
 You are onboarding this repository into Lore. The onboarding ticket is at
 `{ticket_path}`: it names every scaffolding file owed, the prompt each one

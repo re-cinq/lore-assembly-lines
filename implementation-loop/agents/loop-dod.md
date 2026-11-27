@@ -37,7 +37,7 @@ config:
     - name: lore
       transport: http
       url: ${LORE_MCP_URL}
-      headers_secret: lore-mcp-auth
+      visit_token: { audience: lore, scopes: [context:read, context:write] }
 ---
 You are editing files in a git repository. Your job is to define DONE for
 the ticket below as executable acceptance tests that FAIL right now, so

@@ -34,7 +34,7 @@ config:
     - name: lore
       transport: http
       url: ${LORE_MCP_URL}
-      headers_secret: lore-mcp-auth
+      visit_token: { audience: lore, scopes: [context:read, context:write] }
 ---
 The pull request for this ticket has a RED build, or Lore's review asked
 for changes on it. Your job is to make it green, or make the changes the

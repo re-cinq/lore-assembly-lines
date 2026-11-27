@@ -24,7 +24,7 @@ config:
     - name: lore
       transport: http
       url: ${LORE_MCP_URL}
-      headers_secret: lore-mcp-auth
+      visit_token: { audience: lore, scopes: [context:read, context:write] }
 ---
 You split a confirmed bug that is too broad for one change into small tasks a person can queue one at a time.
 

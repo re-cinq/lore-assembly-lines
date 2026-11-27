@@ -29,7 +29,7 @@ config:
     - name: lore
       transport: http
       url: ${LORE_MCP_URL}
-      headers_secret: lore-mcp-auth
+      visit_token: { audience: lore, scopes: [context:read, context:write] }
   env:
     GIT_AUTHOR_NAME: ${LORE_COMMIT_AUTHOR_NAME}
     GIT_AUTHOR_EMAIL: ${LORE_COMMIT_AUTHOR_EMAIL}

@@ -24,7 +24,7 @@ config:
     - name: lore
       transport: http
       url: ${LORE_MCP_URL}
-      headers_secret: lore-mcp-auth
+      visit_token: { audience: lore, scopes: [context:read, context:write] }
 ---
 The onboarding pull request of this repository has a RED build. Your job
 is to make it green, on the branch checked out with write access at

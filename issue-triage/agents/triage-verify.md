@@ -24,7 +24,7 @@ config:
     - name: lore
       transport: http
       url: ${LORE_MCP_URL}
-      headers_secret: lore-mcp-auth
+      visit_token: { audience: lore, scopes: [context:read, context:write] }
 ---
 You cross-reference a diagnosed issue against this repository's specifications and documentation to determine whether the reported behaviour is a genuine bug, a misunderstanding, or intended behaviour.
 

@@ -84,6 +84,9 @@ at exactly `{decomposition_path}`; the file is the deliverable:
       "reason": "<only when a test linked to this statement exists: why that test file, named by its path, does not show the behaviour>"
     }
   ],
+  "not_ticketed": [
+    { "line": 12, "text": "<the statement, as the spec says it>", "reason": "<why it is not work: e.g. a rule of the spec template, who owns the endpoint, a sign-off>" }
+  ],
   "stories": [
     {
       "title": "<short user-facing story title>",
@@ -284,16 +287,36 @@ Rules:
   the intro and the narrative sections (Background, Rationale, Problem
   Statement, Open Questions). Name every testable statement in at least
   one task unless its assessment is present with implementation evidence
-  or its line is settled.
+  or its line is settled, or it is listed in `not_ticketed`.
+- **A statement about the document itself is not work.** A rule of
+  the spec's template, who owns or reviews it, a sign-off, an approval
+  step or any other process the spec describes for itself gets no task
+  and no `spec_lines` entry. List each one once in `not_ticketed`, with
+  the line it begins on, its text and why it is not work; the story
+  issue shows them under "Not ticketed".
+- **Decide from the code what the code already answers.** When the
+  spec leaves a choice open but the repository answers it (an existing
+  model already has the field, an endpoint already returns the shape,
+  a setting already exists), take that answer and do not block the
+  task: add a line to its `changes` that starts `Assumed:`, states the
+  decision, and names the file and symbol it rests on, for example
+  "Assumed: the page shows `listPrice`, the field `Product` already
+  exposes (`src/models/product.ts`, `Product.listPrice`)".
+- **No task's acceptance is a person confirming something.** Every
+  acceptance criterion is an outcome the loop can show done in the
+  code, a test or CI. "A product owner confirms", "the team agrees" or
+  "someone signs off" is never a criterion; the filing station sends a
+  task whose criteria are only such sentences back to you.
 - **Set `needs_person` only on a task the implementation loop cannot do
   from a checkout of this repository.** The loop's agent works in a pod
   with the repository and its CI, nothing else. So a task needs a person
   when it applies terraform or changes anything in a cloud console, the
   cluster or Secret Manager; creates or rotates a credential; changes
   another repository; needs an outside account or vendor; takes a
-  product or design decision the spec leaves open; or is a by-hand step
-  on production data. Write in it what the person does and why the
-  loop cannot. Its issue is filed with `lore:blocked`, so the loop skips
+  product or design decision that neither the spec nor the repository's
+  code answers; or is a by-hand step on production data. Write in it
+  what the person does and why the loop cannot; for an open decision,
+  name the question in one sentence. Its issue is filed with `lore:blocked`, so the loop skips
   it until the person removes the label. Never set it on code, tests,
   docs, workflows, Helm values, terraform files or migrations in this
   repository: the loop writes those, even when a person applies them
